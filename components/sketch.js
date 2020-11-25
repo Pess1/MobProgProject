@@ -1,22 +1,12 @@
 import Expo from 'expo';
 import * as ExpoPixi from 'expo-pixi';
-import React, { Component, useEffect, useState } from 'react';
-import { Image, Button, Platform, AppState, StyleSheet, Text, View, Animated } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Platform, StyleSheet, View, Animated } from 'react-native';
 import App from '../App';
 import { Video } from 'expo-av';
 import * as ImagePicker from 'expo-image-picker';
 import{ Icon } from'react-native-elements';
- 
-const isAndroid = Platform.OS === 'android';
-function uuidv4() {
-  //https://stackoverflow.com/a/2117523/4047926
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = (Math.random() * 16) | 0,
-      v = c == 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
-//http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4
+
 export default function sketchPage ({navigation}) {
   const [isPaused, setIsPaused] = useState(false);
   const [playIcon, setPlayIcon] = useState('play-arrow');
@@ -25,6 +15,9 @@ export default function sketchPage ({navigation}) {
 
   const opacity = React.useMemo(() => new Animated.Value(0), []);
   const [cameraRollPermission, setCameraRollPermission] = useState(null);
+
+  //UseRef
+  const pixiSketch = useRef(null)
   
   //Camera Roll Permissions to access user videos
   const askCameraRollPermission = async () => {
@@ -66,34 +59,7 @@ export default function sketchPage ({navigation}) {
     }
     
   }
-  /*state = {
-    image: null,
-    appState: AppState.currentState,
-  };
-
-  handleAppStateChangeAsync = nextAppState => {
-    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-      if (isAndroid && this.sketch) {
-        this.setState({ appState: nextAppState, id: uuidv4(), lines: this.sketch.lines });
-        return;
-      }
-    }
-    this.setState({ appState: nextAppState });
-  };
-
-  componentDidMount() {
-    AppState.addEventListener('change', this.handleAppStateChangeAsync);
-  }
-
-  UNSAFE_componentWillUnmount() {
-    AppState.removeEventListener('change', this.handleAppStateChangeAsync);
-  }
-
-  onReady = () => {
-    console.log('ready!');
-  }; */
-
-
+  
   //How to get the video as a background was taken from this source https://github.com/expo/examples/blob/master/with-video-background/App.js
   return (
     <View style={styles.container}>
@@ -128,12 +94,14 @@ export default function sketchPage ({navigation}) {
           strokeColor={0xff55ff}
           strokeWidth={8}
           strokeAlpha={1}
+          ref={pixiSketch}
         />
         <View style={styles.icon}>
           <Icon type='material' name={playIcon} color='red' raised onPress={play}/>
           <Icon type='material' name='slow-motion-video' color={speedIconColor} raised onPress={videoSpeed}/>
           <Icon type='material' name='video-library' color='blue' raised onPress={selectVideo}/>
-          <Icon type='material' name='videocam' color='black' raised onPress={() => navigation.navigate('CameraPage')}/>
+          <Icon type='material' name='videocam' color='black' raised onPress={() => navigation.navigate('Camera Page')}/>
+          <Icon type='material' name='undo' color='red' raised onPress={() => pixiSketch.current.undo()}/>
         </View>
       </View>
     </View>

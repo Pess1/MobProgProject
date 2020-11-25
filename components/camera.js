@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import {StyleSheet, View, Button, Text, Image} from 'react-native';
+import {View, Text} from 'react-native';
 import * as Permissions from 'expo-permissions';
 import { Camera } from 'expo-camera';
 import { Audio } from 'expo-av';
@@ -12,11 +12,12 @@ export default function CameraPage({route, navigation}) {
     const [hasMediaPermission, setMediaPermission] = useState(null);
 
     const camera = useRef(null);
-    const [video, setVideo] = useState('');
 
     const [recording, setRecording] = useState(false);
     const [buttonColor, setButtonColor] = useState('blue');
     const [iconName, setIconName] = useState('play-arrow');
+
+    const [video, setVideo] = useState({});
 
     useEffect(() => {
         askPermissions();
@@ -38,25 +39,21 @@ export default function CameraPage({route, navigation}) {
             setIconName('stop');
             setVideo(await camera.current.recordAsync());
         } else {
+            console.log("pebis")
+            camera.current.stopRecording();
             setRecording(false);
             setButtonColor('blue');
             setIconName('play-arrow');
-            camera.current.stopRecording();
-            saveVideo();
+            saveVideo(video);
         }
-
     }
 
-    const saveVideo = async () => {
-        if (video == undefined || video == '') {
-            saveVideo();
-        } else {
-            console.log(video)
-            let isSaved = await MediaLibrary.createAssetAsync(video.uri);
-            if (isSaved) {
-                console.log('saved');
-            }
-            setVideo('');
+
+    const saveVideo = async (vid) => {
+        console.log(vid)
+        let isSaved = await MediaLibrary.createAssetAsync(vid.uri);
+        if (isSaved) {
+            console.log('saved');
         }
     }
 
@@ -74,7 +71,6 @@ export default function CameraPage({route, navigation}) {
                     <Text>No access to camera</Text>
                 )
             }
-
         </View>
     ) 
 }

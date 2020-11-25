@@ -14,7 +14,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Sketch Page" component={SketchPage} />
-        <Stack.Screen name="CameraPage" component={CameraPage} />
+        <Stack.Screen name="Camera Page" component={CameraPage} />
       </Stack.Navigator>
       <View>
         <StatusBar style="auto" />
