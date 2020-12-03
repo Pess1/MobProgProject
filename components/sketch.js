@@ -1,8 +1,6 @@
-import Expo from 'expo';
 import * as ExpoPixi from 'expo-pixi';
 import React, { useEffect, useRef, useState } from 'react';
-import { Platform, StyleSheet, View, Animated } from 'react-native';
-import App from '../App';
+import { StyleSheet, View, Animated, Text } from 'react-native';
 import { Video } from 'expo-av';
 import * as ImagePicker from 'expo-image-picker';
 import{ Icon } from'react-native-elements';
@@ -14,7 +12,7 @@ export default function sketchPage ({navigation}) {
   const [video, setVideo] = useState({uri: './assets/placeholder.mp4', name: 'liftvideo', rate: 1});
 
   const opacity = React.useMemo(() => new Animated.Value(0), []);
-  const [cameraRollPermission, setCameraRollPermission] = useState(null);
+  const [hasCameraRollPermission, setCameraRollPermission] = useState(null);
 
   //UseRef
   const pixiSketch = useRef(null)
@@ -62,48 +60,56 @@ export default function sketchPage ({navigation}) {
   
   //How to get the video as a background was taken from this source https://github.com/expo/examples/blob/master/with-video-background/App.js
   return (
-    <View style={styles.container}>
-      <View style={styles.background}>
-        <Animated.View
-          style={[
-            styles.backgroundViewWrapper,
-            { opacity: opacity }
-          ]}
-        >
-          <Video
-            source={{uri: video.uri}}
-            rate={video.rate}
-            isMuted={true}
-            resizeMode="cover"
-            shouldPlay={isPaused}
-            isLooping
-            style={{ flex: 1}}
-            onLoad={() => {
-              // https://facebook.github.io/react-native/docs/animated#timing
-              Animated.timing(opacity, {
-                toValue: 1,
-                useNativeDriver: true,
-              }).start();
-            }}
-          />
-        </Animated.View>
-      </View>
-      <View style={styles.overlay}>
-        <ExpoPixi.Sketch
-          style={styles.sketch}
-          strokeColor={0xff55ff}
-          strokeWidth={8}
-          strokeAlpha={1}
-          ref={pixiSketch}
-        />
-        <View style={styles.icon}>
-          <Icon type='material' name={playIcon} color='red' raised onPress={play}/>
-          <Icon type='material' name='slow-motion-video' color={speedIconColor} raised onPress={videoSpeed}/>
-          <Icon type='material' name='video-library' color='blue' raised onPress={selectVideo}/>
-          <Icon type='material' name='videocam' color='black' raised onPress={() => navigation.navigate('Camera Page')}/>
-          <Icon type='material' name='undo' color='red' raised onPress={() => pixiSketch.current.undo()}/>
-        </View>
-      </View>
+    <View style={{flex: 1}}>
+      { hasCameraRollPermission ?
+        (
+          <View style={styles.container}>
+            <View style={styles.background}>
+              <Animated.View
+                style={[
+                  styles.backgroundViewWrapper,
+                  { opacity: opacity }
+                ]}
+              >
+                <Video
+                  source={{uri: video.uri}}
+                  rate={video.rate}
+                  isMuted={true}
+                  resizeMode="cover"
+                  shouldPlay={isPaused}
+                  isLooping
+                  style={{ flex: 1}}
+                  onLoad={() => {
+                    // https://facebook.github.io/react-native/docs/animated#timing
+                    Animated.timing(opacity, {
+                      toValue: 1,
+                      useNativeDriver: true,
+                    }).start();
+                  }}
+                />
+              </Animated.View>
+            </View>
+            <View style={styles.overlay}>
+              <ExpoPixi.Sketch
+                style={styles.sketch}
+                strokeColor={0xff55ff}
+                strokeWidth={8}
+                strokeAlpha={1}
+                ref={pixiSketch}
+              />
+              <View style={styles.icon}>
+                <Icon type='material' name={playIcon} color='red' raised onPress={play}/>
+                <Icon type='material' name='slow-motion-video' color={speedIconColor} raised onPress={videoSpeed}/>
+                <Icon type='material' name='video-library' color='blue' raised onPress={selectVideo}/>
+                <Icon type='material' name='videocam' color='black' raised onPress={() => navigation.navigate('Camera Page')}/>
+                <Icon type='material' name='undo' color='red' raised onPress={() => pixiSketch.current.undo()}/>
+              </View>
+            </View>
+          </View>
+        ) : (
+          <Text>No access to Camera Roll = MY APP NO WORK!</Text>
+        )
+      }
     </View>
   );
 }
