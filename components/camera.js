@@ -22,6 +22,7 @@ export default function CameraPage({route, navigation}) {
         askMediaPermissions();
     }, [])
 
+    //Permissions
     const askCameraPermissions = async () => {
         const { status } = await Camera.requestPermissionsAsync();
         setPermission( status == 'granted' );
@@ -37,6 +38,7 @@ export default function CameraPage({route, navigation}) {
         setMediaPermission( status == 'granted');
     }
 
+    //Creating the video asset and saving it into camera roll
     const saveVideo = async (vid) => {
         console.log(vid.uri)
         let isSaved = await MediaLibrary.createAssetAsync(vid.uri);
@@ -64,6 +66,7 @@ export default function CameraPage({route, navigation}) {
         setRecording(true);
         setButtonColor('red');
         setIconName('stop');
+        //When recordAsync() gets a value the execution continues and calls saveVideo
         const vid = await camera.current.recordAsync()
         console.log("startRecording Resolved")
         console.log(vid)

@@ -10,6 +10,7 @@ export default function sketchPage ({navigation}) {
   const [playIcon, setPlayIcon] = useState('play-arrow');
   const [speedIconColor, setSpeedIconColor] = useState('grey');
   const [video, setVideo] = useState({uri: './assets/placeholder.mp4', name: 'liftvideo', rate: 1});
+  const [penColor, setPenColor] = useState(0xff55ff);
 
   const opacity = React.useMemo(() => new Animated.Value(0), []);
   const [hasCameraRollPermission, setCameraRollPermission] = useState(null);
@@ -55,7 +56,21 @@ export default function sketchPage ({navigation}) {
       setVideo({...video, rate: 1.0})
       setSpeedIconColor('grey')
     }
-    
+  }
+
+  //Change pen color to magenta
+  const magenta = () => {
+    setPenColor(0xff55ff)
+  }
+
+  //Change pen color blue
+  const blue = () => {
+    setPenColor(0x55a2ff)
+  }
+
+  //Change pen color green
+  const green = () => {
+    setPenColor(0x55ff66)
   }
   
   //How to get the video as a background was taken from this source https://github.com/expo/examples/blob/master/with-video-background/App.js
@@ -92,7 +107,7 @@ export default function sketchPage ({navigation}) {
             <View style={styles.overlay}>
               <ExpoPixi.Sketch
                 style={styles.sketch}
-                strokeColor={0xff55ff}
+                strokeColor={penColor}
                 strokeWidth={8}
                 strokeAlpha={1}
                 ref={pixiSketch}
@@ -103,6 +118,11 @@ export default function sketchPage ({navigation}) {
                 <Icon type='material' name='video-library' color='blue' raised onPress={selectVideo}/>
                 <Icon type='material' name='videocam' color='black' raised onPress={() => navigation.navigate('Camera Page')}/>
                 <Icon type='material' name='undo' color='red' raised onPress={() => pixiSketch.current.undo()}/>
+              </View>
+              <View style={styles.icon}>
+                <Icon type='material' name='brush' color='#ff55ff' raised onPress={magenta}/>
+                <Icon type='material' name='brush' color='#55a2ff' raised onPress={blue}/>
+                <Icon type='material' name='brush' color='#55ff66' raised onPress={green}/>
               </View>
             </View>
           </View>
