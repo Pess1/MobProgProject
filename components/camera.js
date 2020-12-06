@@ -18,19 +18,19 @@ export default function CameraPage({route, navigation}) {
 
     useEffect(() => {
         askCameraPermissions();
-        askAudioPermissions();
-        askMediaPermissions();
     }, [])
 
     //Permissions
     const askCameraPermissions = async () => {
         const { status } = await Camera.requestPermissionsAsync();
         setPermission( status == 'granted' );
+        askAudioPermissions();
     }
 
     const askAudioPermissions = async () => {
         const { status } = await Audio.requestPermissionsAsync();
         setAudioPermission( status == 'granted');
+        askMediaPermissions();
     }
 
     const askMediaPermissions = async () => {
